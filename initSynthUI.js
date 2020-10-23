@@ -222,7 +222,7 @@ const initSynthUI = (voices) => {
     {
       label: "Volume",
       min: 0,
-      max: 50,
+      max: 30,
       getVal: () => destinationGain * 100,
       onChange: (val) => {
         DESTINATION_OUTPUT.gain.value = val / 100;

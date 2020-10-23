@@ -1,0 +1,354 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: "Roboto Mono", monospace;
+  background: #999;
+}
+
+.synth-container {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.drum-container {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+/* .controls-container {
+  align-items: flex-start;
+  display: flex;
+  z-index: 1;
+
+} */
+
+canvas {
+  /* border: 10px solid #333; */
+  top: 50px;
+  left: 0;
+  position: absolute;
+  margin: 0 auto;
+  display: block;
+  /* border-bottom-left-radius: 3px; */
+  /* border-bottom-right-radius: 3px; */
+  z-index: 0;
+}
+
+.info {
+  color: #333;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 5px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+.info:hover {
+  opacity: 1;
+}
+
+.info a {
+  color: #333;
+}
+
+.controls {
+  display: flex;
+  /* background: #333; */
+  /* border-top-left-radius: 3px; */
+  /* border-top-right-radius: 3px; */
+  color: #fafafa;
+  /* border-radius: 3px; */
+  overflow: hidden;
+  /* border: 10px solid #333; */
+  /* border-bottom: none; */
+}
+
+.project-controls {
+  width: 260px;
+  height: 100px;
+}
+
+.color-controls-title {
+  display: flex;
+}
+
+.color-controls-title {
+  flex-grow: 1;
+}
+
+.color-controls-title span:nth-child(0) {
+  flex-shrink: 1;
+}
+
+.color-control {
+  padding-top: 2px;
+  padding-left: 5px;
+  width: 50%;
+  box-sizing: border-box;
+  /* padding: 0 10px 0 5px; */
+  display: flex;
+  height: calc(100% / 3);
+}
+
+.color-control input {
+  margin-top: 5px;
+  margin-right: 10px;
+  flex-grow: 1;
+}
+
+.color-controls-wrapper {
+  flex-grow: 1;
+  display: flex;
+}
+
+.color-controls {
+  flex-grow: 1;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  height: 100px;
+}
+
+.effect-knob {
+  background: #555;
+  border: 5px solid #666;
+  /* flex-grow: 1; */
+  display: flex;
+  box-sizing: border-box;
+  height: 100px;
+  font-size: 2em;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 10px;
+  text-align: center;
+  /* border-radius: 2px; */
+}
+
+.circle-power {
+  display: block;
+  background: rgba(0, 0, 0, 0.3);
+  width: 10px;
+  height: 10px;
+  border-radius: 10px;
+  border: 0;
+}
+
+/* ================= PLAY BUTTON ======================== */
+#toggle-play {
+  cursor: pointer;
+  background: #555;
+  color: #fafafa;
+  padding: 10px;
+  margin-bottom: 10px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 5px solid #666;
+  display: block;
+  width: 100%;
+}
+
+#toggle-play:hover {
+  background: #fafafa;
+  color: #333;
+}
+
+.play-button-icon {
+  background: none;
+  display: block;
+  outline: none;
+  border: none;
+  width: 0;
+  height: 0;
+  margin-left: 40%;
+  border-top: 35px solid transparent;
+  border-bottom: 35px solid transparent;
+  border-left: 60px solid currentColor;
+}
+
+#toggle-play.is-playing .play-button-icon {
+  background: none;
+  display: block;
+  outline: none;
+  border: none;
+  width: 0;
+  height: 0;
+  margin-left: 10%;
+  border-top: none;
+  border-bottom: none;
+  border-left: none;
+  width: 60px;
+  height: 60px;
+  background: currentColor;
+  margin: 0 auto;
+  border-radius: 2px;
+}
+
+.synth-controls {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  /* flex-flow: column wrap;
+  flex-direction: column;
+  height: 380px; */
+  /* height: 100vh; */
+}
+
+.controls-text {
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  right: 0;
+  text-align: right;
+  width: 350px;
+  padding: 5px 10px;
+  font-size: 0.8em;
+  color: #eee;
+}
+.osc {
+  flex-grow: 1;
+  min-width: 200px;
+  padding: 5px;
+  /* border: 5px solid #222; */
+  position: relative;
+}
+
+/* label {
+  color: white;
+  opacity: 0.9;
+  font-size: 0.8em;
+  pointer-events: none;
+} */
+.synth-container label,
+.slider-wrapper label {
+  position: absolute;
+  top: 1px;
+  left: 5px;
+  color: white;
+  opacity: 0.9;
+  font-size: 0.8em;
+  pointer-events: none;
+}
+.slider-wrapper {
+  position: relative;
+}
+
+.select-wrapper {
+  display: flex;
+  position: relative;
+  margin-bottom: 3px;
+}
+.fx {
+  /* flex-grow: 1; */
+  padding: 5px;
+  padding-top: 30px;
+  position: relative;
+  background: #666;
+}
+.osc h3 {
+  margin: 0;
+  margin-bottom: 5px;
+  font-size: 1em;
+  color: #222;
+  mix-blend-mode: overlay;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}
+/*  ===================================  */
+
+.select-wrapper label {
+  flex-grow: 1;
+  text-align: right;
+  margin-right: 10px;
+  position: relative;
+  top: 1px;
+}
+
+.select-wrapper select {
+  /* width: 100px; */
+  padding: 0;
+  padding-left: 5px;
+  height: 22px;
+  border-radius: 2px;
+  /* box-shadow: 2px 2px 8px #999; */
+  background: white;
+  mix-blend-mode: overlay;
+  color: #222;
+  padding-right: 20px;
+  border: none;
+  outline: none;
+  display: inline-block;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  font-family: "Roboto Mono";
+  font-size: 12px;
+  text-transform: capitalize;
+}
+.select-wrapper {
+  position: relative;
+}
+.select-wrapper:after {
+  content: ">";
+  font-family: "Roboto Mono";
+  color: rgba(0, 0, 0, 0.5);
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  mix-blend-mode: multiply;
+
+  transform: rotate(90deg);
+  right: 3px;
+  top: 1px;
+  height: "100%";
+  padding: 0;
+  /* border-bottom: 1px solid #ddd; */
+  position: absolute;
+  pointer-events: none;
+}
+.select-wrapper:before {
+  content: "";
+  right: 0;
+  top: 0;
+  width: 18px;
+  height: 100%;
+  mix-blend-mode: overlay;
+  background: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  pointer-events: none;
+  display: block;
+}
+
+.drum-track-title {
+  font-weight: normal;
+  display: inline-block;
+  width: 70px;
+  position: relative;
+  top: 3px;
+}
+
+.drum-container .slider-wrapper {
+  flex-grow: 1;
+  margin-right: 12px;
+}
+.drum-container .slider-wrapper label {
+  top: 5px;
+}
+
+.section-title {
+  background: #222;
+  color: white;
+  padding: 0;
+  writing-mode: vertical-rl;
+  text-orientation: sideways-right;
+}
+.section-title h2 {
+  padding: 0;
+  margin: 0;
+}

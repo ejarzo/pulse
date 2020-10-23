@@ -1,0 +1,110 @@
+/* modified from http://danielstern.ca/range.css/#/ */
+
+.drum-container input[type="range"] {
+  width: 100%;
+  height: 10px;
+  margin: 3.2px 10px;
+  padding: 5px 0;
+  background-color: transparent;
+  -webkit-appearance: none;
+}
+.drum-container input[type="range"]:focus {
+  outline: none;
+}
+.drum-container input[type="range"]::-webkit-slider-runnable-track {
+  z-index: 0;
+  position: relative;
+  background: rgba(33, 33, 33, 0.2);
+  border: 0;
+  border-radius: 19.9px;
+  width: 100%;
+  height: 5.6px;
+  cursor: pointer;
+}
+.drum-container input[type="range"]::-webkit-slider-thumb {
+  margin-top: -3.2px;
+  width: 15px;
+  height: 15px;
+  background: #fafafa;
+  z-index: 2;
+  mix-blend-mode: normal;
+  position: relative;
+  border: 0;
+  border-radius: 50px;
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+.drum-container input[type="range"]:focus::-webkit-slider-runnable-track {
+  background: rgba(33, 33, 33, 0.3);
+}
+.drum-container input[type="range"]::-moz-range-track {
+  z-index: 0;
+  position: relative;
+  background: rgba(33, 33, 33, 0.7);
+  mix-blend-mode: overlay;
+  border: 0;
+  border-radius: 19.9px;
+  width: 100%;
+  height: 5.6px;
+  cursor: pointer;
+}
+.drum-container input[type="range"]::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  background: #fafafa;
+  z-index: 2;
+  mix-blend-mode: normal;
+  position: relative;
+  border: 0;
+  border-radius: 50px;
+  cursor: pointer;
+}
+.drum-container input[type="range"]::-ms-track {
+  background: transparent;
+  border-color: transparent;
+  border-width: 3.2px 0;
+  color: transparent;
+  width: 100%;
+  height: 5.6px;
+  cursor: pointer;
+}
+.drum-container input[type="range"]::-ms-fill-lower {
+  background: rgba(33, 33, 33, 0.3);
+  border: 0;
+  border-radius: 39.8px;
+}
+.drum-container input[type="range"]::-ms-fill-upper {
+  z-index: 0;
+  position: relative;
+  background: rgba(33, 33, 33, 0.8);
+  mix-blend-mode: overlay;
+  border: 0;
+  border-radius: 39.8px;
+}
+.drum-container input[type="range"]::-ms-thumb {
+  width: 15px;
+  height: 15px;
+  background: #fafafa;
+  z-index: 2;
+  mix-blend-mode: normal;
+  position: relative;
+  border: 0;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-top: 0px;
+  /*Needed to keep the Edge thumb centred*/
+}
+.drum-container input[type="range"]:focus::-ms-fill-lower {
+  z-index: 0;
+  position: relative;
+  background: rgba(33, 0, 0, 0.8);
+  mix-blend-mode: overlay;
+}
+.drum-container input[type="range"]:focus::-ms-fill-upper {
+  background: rgba(33, 33, 33, 0.3);
+}
+@supports (-ms-ime-align: auto) {
+  .drum-container input[type="range"] {
+    margin: 0;
+  }
+}

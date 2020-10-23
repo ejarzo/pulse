@@ -1,21 +1,12 @@
 const NUM_OSCS = 4;
-const SAMPLE_RATE = Math.pow(2, 8);
+const SAMPLE_RATE = Math.pow(2, 10);
 
-// const analyzer = new Tone.Waveform(SAMPLE_RATE);
-const oscAnalyzers = [
-  new Tone.Waveform(SAMPLE_RATE),
-  new Tone.Waveform(SAMPLE_RATE),
-  new Tone.Waveform(SAMPLE_RATE),
-  new Tone.Waveform(SAMPLE_RATE),
-];
+const oscAnalyzers = [0, 1, 2, 4].map((_) => new Tone.Waveform(SAMPLE_RATE));
+
 const hpFilter = new Tone.Filter({ frequency: 5, type: "highpass" });
 const lpFilter = new Tone.Filter(20000, "lowpass");
 const cheby = new Tone.Chebyshev({ order: 2, wet: 0 });
 const limiter = new Tone.Limiter();
-
-// const DESTINATION_OUTPUT = new Tone.Gain(destinationGain)
-//   .connect(analyzer)
-//   .send("SYNTH_OUTPUT");
 
 function Synth() {
   const ACTIVE_EFFECTS = [cheby, hpFilter, lpFilter];

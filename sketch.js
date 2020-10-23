@@ -2,20 +2,25 @@
 
 let DRUM_CENTER;
 let TWO_PI;
+const SCALE = teoria.note("a").scale("major");
+
 let distortionAmount = 0;
 let chordIndex = 0;
 let chordNoteIndex = 0;
 let voiceIndex = 0;
 let octaveMultiplier = 0.5;
-const SCALE = teoria.note("a").scale("major");
+let isMouseHeld = false;
+
+const notes = SCALE.notes();
+let pressCircleRadius = 50;
+
 let destinationGain = 0.2;
 const DESTINATION_OUTPUT = new Tone.Gain(destinationGain).receive(
   "SYNTH_OUTPUT"
 );
+
 const VOICES = [0, 1, 2].map((_) => new Synth());
-// const DESTINATION_OUTPUT = new Tone.Gain(destinationGain)
-//   .connect(analyzer)
-//   .send("SYNTH_OUTPUT");
+
 const isMouseInRange = () => mouseY > 150 && mouseY < height - 150;
 
 const kit = new Tone.Players({
@@ -33,32 +38,33 @@ const distortion = new Tone.Distortion({ distortion: 0 });
 const reverb = new Tone.Freeverb({ wet: 0 });
 const gain = new Tone.Gain({ gain: 1 });
 const split = new Tone.MultibandSplit();
-const distortion2 = new Tone.Distortion({ distortion: 0.5, wet: 0 });
+
+const synthDistortion = new Tone.Distortion({ distortion: 0.5, wet: 0 });
 const synthReverb = new Tone.JCReverb({ wet: 0 });
+const synthDelay = new Tone.FeedbackDelay({ wet: 0, feedback: 0.9 });
+const synthLpFilter = new Tone.Filter(20000, "lowpass");
 
-const FINAL_OUTPUT = new Tone.Gain(0.1);
-FINAL_OUTPUT.chain(new Tone.Limiter(0.9), Tone.Master);
+const finalOutput = new Tone.Gain(0.4);
+finalOutput.chain(new Tone.Limiter(-2), Tone.Master);
+
 // Make low frequencies mono to make reverb effect bearable in headphones
-split.low.chain(new Tone.Mono(), FINAL_OUTPUT);
-split.mid.chain(FINAL_OUTPUT);
-split.high.chain(FINAL_OUTPUT);
-
-const delay = new Tone.FeedbackDelay({ wet: 0, feedback: 0.9 });
-const lpFilter2 = new Tone.Filter(20000, "lowpass");
+split.low.chain(new Tone.Mono(), finalOutput);
+split.mid.chain(finalOutput);
+split.high.chain(finalOutput);
 
 kit.chain(distortion, reverb, gain, compressor, split);
 
 DESTINATION_OUTPUT.chain(
-  distortion2,
-  delay,
+  synthDistortion,
+  synthDelay,
   synthReverb,
-  lpFilter2,
+  synthLpFilter,
   new Tone.Compressor(),
-  new Tone.Limiter(-20),
-  FINAL_OUTPUT
+  new Tone.Limiter(-30),
+  finalOutput
 );
 
-$("#toggle-play").on("click", () => {
+const toggleTransport = () => {
   Tone.context.resume();
   Tone.Transport.toggle();
   if (Tone.Transport.state === "stopped") {
@@ -67,6 +73,10 @@ $("#toggle-play").on("click", () => {
     });
   }
   $("#toggle-play").toggleClass("is-playing");
+};
+
+$("#toggle-play").on("click", () => {
+  toggleTransport();
 });
 
 const DRUM_KIT = [
@@ -109,7 +119,6 @@ Tone.Transport.scheduleRepeat((time) => {
     return;
   }
 
-  // console.log("schedule time", time);
   const chord = getChord(chordIndex);
   // synth.triggerAttack(chord[chordNoteIndex] * octaveMultiplier, time);
   playVoice(chord[chordNoteIndex] * octaveMultiplier, time);
@@ -256,7 +265,6 @@ function drawWaveforms(waveform) {
     noFill();
     beginShape();
     const c = `hsl(${((i / 4) * 60 - 20 + 360) % 360}, 50%, 50%)`;
-    // console.log(c);
     stroke(c);
     let waveform1 = analyzer.getValue();
 
@@ -272,45 +280,6 @@ function drawWaveforms(waveform) {
     pop();
   });
 }
-
-function drawWaveforms2(waveform) {
-  for (let i = 0; i < SAMPLE_RATE; i++) {
-    // let y = sin(frameCount) * 500 + 100;
-    // const r = Math.sqrt(ampl);
-    let theta = 0;
-    theta += 360 / SAMPLE_RATE;
-
-    oscAnalyzers.forEach((analyzer, i) => {
-      push();
-      if (i === 0) {
-        translate(width / 4, height / 4);
-      }
-      if (i === 1) {
-        translate(width / 4, height - height / 4);
-      }
-      if (i === 2) {
-        translate(width - width / 4, height / 4);
-      }
-      if (i === 3) {
-        translate(width - width / 4, height - height / 4);
-      }
-      strokeWeight(1);
-      noFill();
-      beginShape();
-      const c = `hsl(${((i / 4) * 60 - 20 + 360) % 360}, 50%, 50%)`;
-      // console.log(c);
-      stroke(c);
-      let waveform1 = analyzer.getValue();
-      let ampl = map(waveform1[i], -1, 1, 0, width);
-      vertex((cos(theta) * ampl) / 10, (sin(theta) * ampl) / 10);
-
-      endShape();
-      pop();
-    });
-  }
-}
-const notes = SCALE.notes();
-let pressCircleRadius = 50;
 
 function draw() {
   background(33);
@@ -355,11 +324,15 @@ function draw() {
   }
   pop();
 
+  drawWaveforms();
+
   const circleColor = mouseIsPressed ? 0 : 255;
   fill(circleColor, 100);
+  fill(circleColor);
+  blendMode(SOFT_LIGHT);
   circle(mouseX, mouseY, pressCircleRadius);
+  blendMode(BLEND);
 
-  drawWaveforms();
   if (isMouseHeld) {
     pressCircleRadius++;
   } else {
@@ -368,51 +341,54 @@ function draw() {
 }
 
 function mouseMoved() {
-  // const x = mouseX - width;
   if (isMouseInRange()) {
     const percent = mouseX / width;
     chordIndex = parseInt(percent * notes.length * 2) + 1;
   }
-  // const x = parseInt(((mouseX - width / 2) / width) * notes.length - 1);
-  // chordIndex = x + 1;
 }
 
-function mouseDragged() {
+function mouseDragged(e) {
   if (isMouseHeld) {
     const yPercent = (height - mouseY) / height;
     const xPercent = mouseX / width;
     const freq = Math.pow(2, yPercent * 5 + 8);
 
-    lpFilter2.frequency.value = freq;
+    synthLpFilter.frequency.value = freq;
     synthReverb.set("roomSize", xPercent);
-    console.log(synthReverb.roomSize.value);
   }
 }
-let isMouseHeld = false;
 
 function mousePressed() {
   if (isMouseInRange()) {
     isMouseHeld = true;
-    delay.wet.rampTo(1, 2);
+    synthDelay.wet.rampTo(1, 2);
     synthReverb.wet.rampTo(1, 3);
     synthReverb.set("roomSize", 0);
-    distortion2.wet.rampTo(1, 2);
+    synthDistortion.wet.rampTo(1, 2);
   }
 }
 
 function mouseReleased() {
   if (isMouseHeld) {
     isMouseHeld = false;
-    delay.wet.rampTo(0, 0.5);
-    distortion2.wet.rampTo(0, 0.5);
-    lpFilter2.frequency.value = 20000;
+    synthDelay.wet.rampTo(0, 0.5);
+    synthDistortion.wet.rampTo(0, 0.5);
+    synthLpFilter.frequency.value = 20000;
     synthReverb.wet.rampTo(0, 0.5);
   }
 }
 
-// function mouseMoved() {
-//   if (isMouseHeld) {
-//     const percent = mouseX / width;
-//     lpFilter2.frequency = Math.pow(2, 0);
-//   }
-// }
+function keyPressed() {
+  // Change octave
+  if (key === "z") {
+    octaveMultiplier = Math.max(octaveMultiplier / 2, 0.25);
+  }
+  if (key === "x") {
+    octaveMultiplier = Math.min(octaveMultiplier * 2, 4);
+  }
+
+  // play/pause
+  if (key === " ") {
+    toggleTransport();
+  }
+}

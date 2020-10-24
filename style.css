@@ -342,9 +342,9 @@ canvas {
 }
 
 .section-title {
-  background: #222;
+  background: #333;
   color: #fafafa;
-  padding: 0;
+  padding-top: 5px;
   writing-mode: vertical-rl;
   text-orientation: sideways-right;
 }
